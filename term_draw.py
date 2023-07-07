@@ -1,110 +1,34 @@
-from PIL.Image import *
-from os import system
+from colorama import init
+from os import get_terminal_size, system
+from PIL.Image import open as open_im
+from time import sleep
 
 
-file = input()
-im = open(file)
+im = open_im(input())
+im = im.convert("RGB")
+w, h = im.size
+tw, th = get_terminal_size()
 
-w = im.width
-h = im.height
+if ((w * 2) > tw) | (h > th):
+    w2 = round(tw / 2) - 2
+    h2 = round(h * (w2 / w))
 
-new_im = new("L", (w, h))
+print(w2, h2)
 
-for y in range(h):
-    for x in range(w):
-        try:
-            if im.getpixel((x, y)) != im.getpixel((x + 1, y)):
-                new_im.putpixel((x, y), 255)
-            else:
-                new_im.putpixel((x, y), 0)
-        except:
-            pass
+im = im.resize((w2, h2))
 
-new_im.save("hello2.png", "png")
-
-def get_p(x, y, f=new_im):
-    try:
-        state = (f.getpixel((x - 1, y + 1)), f.getpixel((x, y + 1)), f.getpixel((x + 1, y + 1)),
-                f.getpixel((x - 1, y)),     f.getpixel((x, y)),     f.getpixel((x + 1, y))    ,
-                f.getpixel((x - 1, y - 1)), f.getpixel((x, y - 1)), f.getpixel((x + 1, y - 1)))
-    except:
-        state = (0, 0, 0,
-                 0, 0, 0,
-                 0, 0, 0)
-
-    d = {(0, 255, 0,
-          0, 255, 0,
-          0, 255, 0): "│",
-
-         (0, 0, 0,
-          255, 255, 255, 
-          0, 0, 0): "─",
-         
-         (0, 0, 0,
-          0, 255, 255,
-          0, 255, 0): "┌",
-         
-         (0, 0, 0,
-          255, 255, 0,
-          0, 255, 0): "┐",
-         
-         (0, 255, 0,
-          0, 255, 255,
-          0, 0, 0): "└",
-         
-         (0, 255, 0,
-          255, 255, 0,
-          0, 0, 0): "┘",
-         
-         (0, 255, 0,
-          0, 255, 255,
-          0, 255, 0): "├",
-         
-         (0, 0, 0,
-          255, 255, 255,
-          0, 255, 0): "┬",
-         
-         (0, 255, 0,
-          255, 255, 255,
-          0, 0, 0): "┴",
-         
-         (0, 255, 0,
-          255, 255, 0,
-          0, 255, 0): "┤",
-         
-         (255, 0, 0,
-          0, 255, 0,
-          0, 0, 255): "╲",
-         
-         (0, 0, 255,
-          0, 255, 0,
-          255, 0, 0): "╱",
-         
-         (255, 0, 255,
-          0, 255, 0,
-          255, 0, 255): "╳",
-         
-         (255, 255, 255,
-          255, 255, 255,
-          255, 255, 255): "█",
-         
-         (0, 0, 0,
-          0, 0, 0,
-          0, 0, 0): " "
-         }
-
-    try:
-        return d[state]
-    except KeyError:
-        return " "
+init()
 
 
-s = ""
-for i in range(1, h - 1, 3):
-    for j in range(1, w - 1, 3):
-        s += get_p(j, i)
-    s += "\n"
 
+def color(r, g, b):
+    t = 'abcdefghijklmnopqrstuvwxyz'
+    return f"\033[38;2;{r};{g};{b}m██\033[0m" # ██{t[(r + g + b) % len(t)] + t[(r ** 2 + g ** 2 + b ** 2) % len(t)]}
 
-print(s)
-system("pause")
+for i in range(h2):
+    for j in range(w2):
+        print(color(*im.getpixel((j, i))), end="")
+    print()
+    sleep(1 / 24)
+
+exit(system("PAUSE"))
