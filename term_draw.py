@@ -22,8 +22,7 @@ init()
 
 
 def color(r, g, b):
-    t = 'abcdefghijklmnopqrstuvwxyz'
-    return f"\033[38;2;{r};{g};{b}m██\033[0m" # ██{t[(r + g + b) % len(t)] + t[(r ** 2 + g ** 2 + b ** 2) % len(t)]}
+    return f"\033[38;2;{r};{g};{b}m██\033[0m"
 
 for i in range(h2):
     for j in range(w2):
